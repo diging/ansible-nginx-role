@@ -1,0 +1,16 @@
+- name: add webapps configuration to nginx config
+  template:
+    src: nginx_webapps.conf.j2
+    dest: /etc/nginx/conf.d/webapps.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  become: yes
+- name: add base configuration to nginx config
+  copy:
+    src: files/nginx_nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  become: yes

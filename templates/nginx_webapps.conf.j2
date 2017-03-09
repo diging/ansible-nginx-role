@@ -1,0 +1,23 @@
+include /etc/nginx/conf.d/*_upstream.conf;
+
+server {
+    listen   [::]:80;
+    listen   80;
+    listen 443 ssl;
+
+    ssl on;
+    ssl_certificate /etc/nginx/ssl/{{ certificate_name }};
+    ssl_certificate_key /etc/nginx/ssl/{{ private_key_name }};
+
+    server_name {{ ansible_hostname }} "" 127.0.0.1;
+
+    client_max_body_size 4G;
+
+    access_log /var/opt/nginx/logs/nginx-access.log;
+    error_log /var/opt/nginx/logs/nginx-error.log;
+
+    # Error pages
+    error_page 500 502 503 504 /500.html;
+
+    include /etc/nginx/conf.d/*_locations.conf;
+}

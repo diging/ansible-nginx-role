@@ -1,0 +1,47 @@
+- name: create master directory for nginx
+  file:
+    path: /var/opt/{{ item }}
+    state: directory
+    mode: "u=rwx,g=rx,o=rx"
+    owner: nginx
+    group: nginx
+  become: yes
+  with_items:
+    - nginx
+    - wsgi
+- name: ensure webapps group is present
+  group:
+    name: webapps
+    state: present
+    system: yes
+  become: yes
+- name: ensure nginx user is a member of webapps group
+  user:
+    name: nginx
+    groups: webapps
+    append: yes
+  become: yes
+- name: create logs directory for nginx
+  file:
+    path: /var/opt/nginx/logs
+    state: directory
+    mode: "u=rwx,g=rwx,o=r"
+    owner: nginx
+    group: webapps
+  become: yes
+- name: create error log for nginx
+  file:
+    path: /var/opt/nginx/logs/nginx-error.log
+    state: touch
+    mode: "u=rw,g=rw,o=r"
+    owner: nginx
+    group: webapps
+  become: yes
+- name: create access log for nginx
+  file:
+    path: /var/opt/nginx/logs/nginx-access.log
+    state: touch
+    mode: "u=rw,g=rw,o=r"
+    owner: nginx
+    group: webapps
+  become: yes

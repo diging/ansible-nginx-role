@@ -1,0 +1,20 @@
+- name: include variables
+  include_vars: main.yml
+
+- include: install_dependencies.yml
+
+- include: open_tcp_ports.yml
+
+- include: create_users_and_paths.yml
+
+- include: install_selinux_policies.yml
+
+- include: create_self_signed_certificate.yml
+  when: generate_certificate
+
+- include: copy_certificate.yml
+  when: not generate_certificate
+
+- include: configure_nginx.yml
+
+- include: start_nginx.yml

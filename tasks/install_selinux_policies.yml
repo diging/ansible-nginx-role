@@ -1,0 +1,31 @@
+- name: install selinux tools
+  yum:
+    name:
+      - policycoreutils
+      - policycoreutils-python
+      - setroubleshoot
+  become: yes
+- name: allow nginx to access and modify files in /var/opt/nginx
+  command: chcon -Rt httpd_sys_content_t /var/opt/nginx
+  become: yes
+- name: copy custom selinux policy document for nginx
+  copy:
+    src: files/nginx__nginx.te
+    dest: /tmp/nginx.te
+- name: create selinux policy module for nginx
+  command: checkmodule -M -m -o nginx.mod nginx.te
+  args:
+    chdir: /tmp
+    creates: /tmp/nginx.mod
+  become: yes
+- name: compile selinux policy module
+  command: semodule_package -o nginx.pp -m nginx.mod
+  args:
+    chdir: /tmp
+    creates: /tmp/nginx.pp
+  become: yes
+- name: install selinux policy module
+  command: semodule -i nginx.pp
+  args:
+    chdir: /tmp
+  become: yes

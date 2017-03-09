@@ -1,0 +1,23 @@
+- name: include variables
+  include_vars: vault_keys.yml
+  no_log: true
+- name: create ssl directory
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    owner: nginx
+    group: nginx
+  become: yes
+- name: copy certificate files
+  copy:
+    dest="/etc/nginx/ssl/{{ item.value.name }}"
+    content="{{ item.value.content }}"
+    owner="{{ item.value.owner }}"
+    group="{{ item.value.group }}"
+    mode="{{ item.value.mode }}"
+  with_dict: "{{ secret_certificate_files }}"
+  become: yes
+  no_log: true
+- set_fact:
+    private_key_name: "{{ secret_certificate_files.private_key.name }}"
+    certificate_name: "{{ secret_certificate_files.certificate.name }}"

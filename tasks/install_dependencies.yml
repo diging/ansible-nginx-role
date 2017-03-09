@@ -1,0 +1,26 @@
+- name: make sure yum is up to date
+  yum:
+    name: '*'
+    state: latest
+  become: yes
+- name: enable epel repos
+  yum:
+    name: epel-release
+    state: present
+  become: yes
+- name: make sure libraries are installed
+  yum:
+    name:
+      - zlib-devel
+      - openssl-devel
+      - libxslt-devel
+      - libxml2-devel
+      - libpqxx-devel
+      - libpqxx
+    state: present
+  become: yes
+- name: make sure nginx is installed
+  yum:
+    name: nginx
+    state: present
+  become: yes

@@ -1,0 +1,15 @@
+- name: open port 80
+  iptables_raw:
+    name: allow_tcp_80
+    rules: '-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT'
+  become: yes
+- name: open port 443
+  iptables_raw:
+    name: allow_tcp_443
+    rules: '-A INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT'
+  become: yes
+- name: allow related and established connections
+  iptables_raw:
+    name: allow_related_established
+    rules: '-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT'
+  become: yes

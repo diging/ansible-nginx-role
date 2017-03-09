@@ -1,0 +1,28 @@
+- name: create ssl directory
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    owner: nginx
+    group: nginx
+  become: yes
+- name: create a new private key
+  command: openssl genrsa -out {{ ansible_hostname }}.key 2048
+  args:
+    chdir: /etc/nginx/ssl
+    creates: /etc/nginx/ssl/{{ ansible_hostname }}.key
+  become: yes
+- name: create a new CSR
+  command: openssl req -nodes -newkey rsa:2048 -keyout {{ ansible_hostname }}.key -out {{ ansible_hostname }}.csr -subj "/C=US/ST=Arizona/L=Tempe/O=Arizona State University/OU=Center for Biosocial Complexity/CN={{ ansible_hostname }}"
+  args:
+    chdir: /etc/nginx/ssl
+    creates: /etc/nginx/ssl/{{ ansible_hostname }}.csr
+  become: yes
+- name: create a self-signed certificate
+  command: openssl x509 -req -days 365 -in {{ ansible_hostname }}.csr -signkey {{ ansible_hostname }}.key -out {{ ansible_hostname }}.crt
+  args:
+    chdir: /etc/nginx/ssl
+    creates: /etc/nginx/ssl/{{ ansible_hostname }}.crt
+  become: yes
+- set_fact:
+    private_key_name: "{{ ansible_hostname }}.key"
+    certificate_name: "{{ ansible_hostname }}.crt"
