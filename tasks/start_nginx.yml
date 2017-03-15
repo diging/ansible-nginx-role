@@ -8,3 +8,8 @@
     enabled: yes
     name: nginx
   become: yes
+- name: make sure nginx is restarted
+  systemd:
+    state: restarted
+    name: nginx
+  become: yes
