@@ -1,8 +1,13 @@
 include /etc/nginx/conf.d/*_upstream.conf;
 
 server {
-    listen   [::]:80;
+	listen   [::]:80;
     listen   80;
+	server_name _;
+	return 301 https://$host$request_uri;
+}
+
+server {
     listen 443 ssl;
 
     ssl on;
